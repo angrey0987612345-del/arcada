@@ -32,27 +32,43 @@ for (const f of readdirSync(join(PUB, "assets"))) {
   html = html.split("/assets/" + f).join(`data:${mime};base64,${b64}`);
 }
 
-html = html.replace('<script src="/coop.js"></script>\n<script src="/soul.js"></script>\n<script src="/export.js"></script>\n<script src="/app.js"></script>\n<link rel="stylesheet" href="/soul.css">',
-    lambda m: f'<style>{soulCss}</style>\n<script>{safe(coopJs)}</script>\n<script>{safe(soulJs)}</script>\n<script>{safe(exportJs)}</script>\n<script>{safe(appJs)}</script>')
+const INLINE_BLOCK = '<script src="/coop.js"></script>\n<script src="/soul.js"></script>\n<script src="/export.js"></script>\n<script src="/app.js"></script>\n<link rel="stylesheet" href="/soul.css">';
+const inlineReplaced = html.includes(INLINE_BLOCK);
+html = html.replace(INLINE_BLOCK,
+  `<style>${soulCss}</style>\n<script>${safe(coopJs)}</script>\n<script>${safe(soulJs)}</script>\n<script>${safe(exportJs)}</script>\n<script>${safe(appJs)}</script>`);
+if (!inlineReplaced) throw new Error("Не найден блок <script src=...> для инлайн-вставки — проверь index.html");
 
 // Автономный файл: локальные ссылки на manifest/PWA-страницы не нужны
 html = html
   .replace(/<link rel="manifest"[^>]*>\s*/g, "")
   .replace(/<link rel="icon"[^>]*>\s*/g, "")
-  .replace(/<link rel="apple-touch-icon"[^>]*>\s*/g, "");
+  .replace(/<link rel="apple-touch-icon"[^>]*>\s*/g, "")
+  .replace(/<script[^>]*src="(\/[^"]*|https?:\/\/localhost(?::\d+)?\/[^"]*)"[^>]*>\s*<\/script>/g, "");
 
-// Сетевой клиент внутри файла всегда ходит на ретлей-сервер кооператива
-html = html.replace("let netConnecting=false;",
-  `const COOP_BASE=${JSON.stringify(RELAY)};\nlet netConnecting=false;`);
-// Все обращения клиента к серверу комнат — через COOP_BASE (и в index.html, и во встроенном coop.js)
-html = html.split("/.netlify/functions/coop").join("${COOP_BASE}/.netlify/functions/coop");
-html = html.replace(/fetch\('([^']*\$\{COOP_BASE\}[^']*)'/g, "fetch(`$1`"); // '...' → `...` для шаблонов
+// --- Переписываем сетевого клиента на публичный HTTPS-ретлей ---
+// Все fetch('/.netlify/functions/coop...') → fetch(COOP_RELAY+'/.netlify/functions/coop...')
+// (одинарные кавычки сохраняются — скобки fetch не ломаются, шаблоны не нужны)
+const rewriteFetches = (src) =>
+  src.replace(/fetch\('\/\.netlify\/functions\/coop/g, "fetch(COOP_RELAY+'/.netlify/functions/coop");
+
+// Проверка: встроенные скрипты синтаксически валидны
+const assertSyntax = (code, name) => { try { new Function(code); } catch (e) { throw new Error(`Синтаксическая ошибка во встроенном ${name}: ${e.message}`); } };
+
+// 1) Встроенный coop.js — с объявлением константы COOP_RELAY в начале
+const coopPatched = `const COOP_RELAY=${JSON.stringify(RELAY)}; // адрес сервера кооператива (Netlify/GitHub Pages ретлей)\n` + rewriteFetches(coopJs);
+assertSyntax(coopPatched, "coop.js");
+html = html.replace(`<script>${safe(coopJs)}</script>`, `<script>${safe(coopPatched)}</script>`);
+
+// 2) Инлайновый код в index.html (список комнат и т.п.) — использует ту же глобальную COOP_RELAY
+html = rewriteFetches(html);
 
 // Проверка доступности сервера кооператива при открытии «Сетевой игры»
 html = html.replace("function openMultiplayer(){showScreen('mp');checkLan();loadCoopRooms();",
   `function openMultiplayer(){showScreen('mp');checkLan();checkCoopServer();loadCoopRooms();`);
 html = html.replace("function ensureInviteStarter(){",
-  `async function checkCoopServer(){try{const el=$('mp-join-status');if(el)el.textContent='Проверяем сервер совместной игры…';const r=await fetch(COOP_BASE+'/.netlify/functions/coop?action=list&capacity=2',{cache:'no-store'});if(!r.ok)throw 0;}catch(e){netSetStatus('Сервер сетевой игры сейчас недоступен — одиночный режим работает как обычно. Попробуй позже.');}}\nfunction ensureInviteStarter(){`);
+  `async function checkCoopServer(){try{const el=$('mp-join-status');if(el)el.textContent='Проверяем сервер совместной игры…';const r=await fetch(COOP_RELAY+'/.netlify/functions/coop?action=list&capacity=2',{cache:'no-store'});if(!r.ok)throw 0;}catch(e){netSetStatus('Сервер сетевой игры сейчас недоступен — одиночный режим работает как обычно. Попробуй позже.');}}\nfunction ensureInviteStarter(){`);
+
+if (html.includes("/.netlify/functions/coop") && !/fetch\(COOP_RELAY\+'\/\.netlify\/functions\/coop/.test(html)) throw new Error("Не переписанные обращения к ретлею остались в HTML");
 
 writeFileSync(OUT, html);
 console.log(`Готово: ${OUT} (${(html.length / 1024 / 1024).toFixed(2)} МБ)`);

@@ -20,7 +20,8 @@
 
 .contract-banners{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;max-height:360px;overflow:auto;padding:4px}.contract-banner{display:grid;gap:8px;text-align:left;white-space:normal;min-height:86px;border-color:#655a76}.contract-banner span{font-size:11px;color:#c9c0ce}.contract-banner strong{color:#e3c698}.contract-banner.selected{background:#382d40;border-color:#e3c698;box-shadow:inset 3px 0 #e3c698}.contract-banner:focus-visible{outline:2px solid #e3c698;outline-offset:2px}
 </style>
-<script>
+<script>const COOP_RELAY="https://arcadia-coop.netlify.app"; // адрес сервера кооператива (Netlify/GitHub Pages ретлей)
+
 const COOP_OFFLINE='Сервер совместной игры недоступен. Одиночная игра работает как обычно — попробуй позже.';
 class CoopConnection {
  constructor(room,host,onMessage,onStatus,options={}){
@@ -31,7 +32,7 @@ class CoopConnection {
  }
  async request(action,extra={}){
   let response;
-  try{response=await fetch(`${COOP_BASE}/.netlify/functions/coop`,{
+  try{response=await fetch(COOP_RELAY+'/.netlify/functions/coop',{
    method:'POST',headers:{'Content-Type':'application/json'},
    body:JSON.stringify({action,room:this.room,key:this.key,...extra}),signal:AbortSignal.timeout(12000)
   });}catch(e){throw new Error(COOP_OFFLINE);}
@@ -60,7 +61,7 @@ class CoopConnection {
  async poll(){
   if(this.closed)return;
   try{
-   const response=await fetch(`${COOP_BASE}/.netlify/functions/coop?`+new URLSearchParams({room:this.room,key:this.key,after:String(this.cursor)}),{
+   const response=await fetch(COOP_RELAY+'/.netlify/functions/coop?'+new URLSearchParams({room:this.room,key:this.key,after:String(this.cursor)}),{
     cache:'no-store',signal:AbortSignal.timeout(12000)
    });
    const data=await response.json().catch(()=>null);
@@ -76,7 +77,7 @@ class CoopConnection {
   }catch(e){if(!this.closed){if(Date.now()-(this.lastOk||Date.now())>30000){this.close();if(this.onDisconnect)this.onDisconnect();return;}this.onStatus(e.name==='TypeError'||e.name==='TimeoutError'?'Связь с сервером потеряна. Восстанавливаем соединение…':e.message||'Восстанавливаем соединение…');}}
   finally{if(!this.closed)this.pollTimer=setTimeout(()=>this.poll(),typeof SOUL!=='undefined'&&SOUL&&!SOUL.over?120:700);}
  }
- leave(){fetch(`${COOP_BASE}/.netlify/functions/coop`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'leave',room:this.room,key:this.key}),keepalive:true}).catch(()=>{});this.close();}
+ leave(){fetch(COOP_RELAY+'/.netlify/functions/coop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'leave',room:this.room,key:this.key}),keepalive:true}).catch(()=>{});this.close();}
  close(){this.closed=true;this.open=false;clearTimeout(this.pollTimer);clearTimeout(this.sendTimer);}
 }
 </script>
@@ -1219,7 +1220,7 @@ async function checkLan(){
  else el.innerHTML=`<h3>📶 Игра по Wi-Fi без интернета</h3><p class="dim" style="margin:6px 0;line-height:1.7">Сделай свой компьютер сервером: друзья в той же Wi-Fi сети или на точке доступа телефона играют вместе, даже если сайт выключен.</p><button class="btn gold" onclick="downloadLocalServer()">⬇ Скачать локальный сервер (.zip)</button>`;
 }
 function openMultiplayer(){showScreen('mp');checkLan();checkCoopServer();loadCoopRooms();if(invitedRoom){$('mp-code').value=invitedRoom;const code=invitedRoom;invitedRoom='';ensureInviteStarter();mpJoin();}}
-async function checkCoopServer(){try{const el=$('mp-join-status');if(el)el.textContent='Проверяем сервер совместной игры…';const r=await fetch(COOP_BASE+'/.netlify/functions/coop?action=list&capacity=2',{cache:'no-store'});if(!r.ok)throw 0;}catch(e){netSetStatus('Сервер сетевой игры сейчас недоступен — одиночный режим работает как обычно. Попробуй позже.');}}
+async function checkCoopServer(){try{const el=$('mp-join-status');if(el)el.textContent='Проверяем сервер совместной игры…';const r=await fetch(COOP_RELAY+'/.netlify/functions/coop?action=list&capacity=2',{cache:'no-store'});if(!r.ok)throw 0;}catch(e){netSetStatus('Сервер сетевой игры сейчас недоступен — одиночный режим работает как обычно. Попробуй позже.');}}
 function ensureInviteStarter(){if(S.owned.length)return;const c=CHARS.find(c=>c.rar<=4);S.owned=[c.id];S.team=[c.id];S.hp[c.id]=c.hp;save();}
 function prepareMultiplayer(action){
  if(S.owned.length)return true;
@@ -1250,7 +1251,6 @@ function netRoomId(){
 function netSetStatus(msg,color='#ff8a80'){
  const el=$('mp-join-status');if(el){el.textContent=msg;el.style.color=color;}
 }
-const COOP_BASE="https://arcadia-coop.netlify.app";
 let netConnecting=false;
 async function connectRoom(host){
  if(netConnecting)return;
@@ -1284,7 +1284,7 @@ async function loadCoopRooms(){
  const request=++roomListRequest;const capacity=Number(select.value);
  $('mp-rooms').textContent='Загрузка комнат…';
  try{
-  const response=await fetch(`${COOP_BASE}/.netlify/functions/coop?`+new URLSearchParams({action:'list',capacity}),{cache:'no-store'});
+  const response=await fetch(COOP_RELAY+'/.netlify/functions/coop?'+new URLSearchParams({action:'list',capacity}),{cache:'no-store'});
   const data=await response.json().catch(()=>null);if(!data||!response.ok||!Array.isArray(data.rooms))throw new Error(data&&data.error||'');
   if(request!==roomListRequest)return;
   $('mp-rooms').innerHTML=data.rooms.map(r=>`<button class="btn" style="text-align:left" ${r.started||r.count>=r.capacity?'disabled':''} onclick="enterCoopRoom('${r.id}')">Комната ${r.number} · ${r.count}/${r.capacity} · ${r.started?'идёт бой':r.count>=r.capacity?'заполнена':r.count?'присоединиться':'свободна'}</button>`).join('');
@@ -5132,7 +5132,7 @@ async function loadCoopRooms(){
  const request=++roomListRequest;const capacity=Number(select.value);
  $('mp-rooms').textContent='Загрузка комнат…';
  try{
-  const response=await fetch(`${COOP_BASE}/.netlify/functions/coop?`+new URLSearchParams({action:'list',capacity}),{cache:'no-store'});
+  const response=await fetch(COOP_RELAY+'/.netlify/functions/coop?'+new URLSearchParams({action:'list',capacity}),{cache:'no-store'});
   const data=await response.json().catch(()=>null);if(!data||!response.ok||!Array.isArray(data.rooms))throw new Error(data&&data.error||'');
   if(request!==roomListRequest)return;
   $('mp-rooms').innerHTML=data.rooms.map(r=>`<button class="btn" style="text-align:left" ${r.started||r.count>=r.capacity?'disabled':''} onclick="enterCoopRoom('${r.id}')">Комната ${r.number} · ${r.count}/${r.capacity} · ${r.started?'идёт бой':r.count>=r.capacity?'заполнена':r.count?'присоединиться':'свободна'}</button>`).join('');
