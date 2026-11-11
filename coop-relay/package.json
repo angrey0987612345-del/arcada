@@ -1,0 +1,10 @@
+{
+  "name": "arcadia-coop-relay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "АРКАДИЯ — ретлей-сервер кооператива (комнаты и сообщения в Netlify Database)",
+  "dependencies": {
+    "@netlify/database": "^2.0.1"
+  }
+}

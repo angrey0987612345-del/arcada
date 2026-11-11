@@ -1,0 +1,11 @@
+{
+  "name": "arcadia-rpg",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "АРКАДИЯ: Эон Радости — браузерная RPG с кооперативом на Netlify",
+  "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "@netlify/functions": "^6.1.0"
+  }
+}
