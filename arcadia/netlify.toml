@@ -1,0 +1,5 @@
+[build]
+  publish = "public"
+
+[functions]
+  included_files = ["public/**", "netlify/functions/**", "netlify/lib/**", "netlify/database/**", "local-server/**", "netlify.toml", "package.json", "README.md", ".gitignore", "package-lock.json"]

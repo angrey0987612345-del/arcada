@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Скачать АРКАДИЮ — телефон и компьютер</title>
+<meta name="theme-color" content="#0a0018">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script src="/export.js"></script>
+<script src="/app.js"></script>
+<style>
+:root{--pink:#ff2d95;--cyan:#00e5ff;--gold:#ffd700;--card:#161028;--txt:#f2ecff;--dim:#9a8fc0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;background:radial-gradient(1000px 500px at 15% -10%,#ff2d9522,transparent),radial-gradient(900px 500px at 95% 110%,#00e5ff22,transparent),linear-gradient(160deg,#0a0018,#180a30);padding:calc(24px + env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom))}
+.wrap{max-width:980px;margin:0 auto}
+.hidden{display:none!important}
+header{display:flex;gap:18px;align-items:center;margin:10px 0 28px;flex-wrap:wrap}
+header img{width:88px;height:88px;border-radius:22px;box-shadow:0 0 30px #ff2d9555}
+h1{font-size:clamp(26px,5vw,40px);letter-spacing:1px}
+h1 .p{color:var(--pink);text-shadow:0 0 14px #ff2d9588}h1 .c{color:var(--cyan);text-shadow:0 0 14px #00e5ff88}
+.sub{color:var(--dim);margin-top:6px;line-height:1.6}
+.hero{background:linear-gradient(135deg,#2a0a3a,#0f1a3a);border:1px solid #ff2d9566;border-radius:20px;padding:22px;margin-bottom:22px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero b{font-size:18px}
+.state{color:var(--gold);font-size:13px;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid #3a2a6a;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:18px;display:flex;gap:10px;align-items:center}
+.card ol{padding-left:20px;line-height:1.7;color:#d8d0f0;font-size:14px}
+.card p{color:#d8d0f0;font-size:14px;line-height:1.6}
+.tag{font-size:11px;color:var(--dim);border:1px solid #3a2a6a;border-radius:999px;padding:3px 10px;align-self:flex-start}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-size:15px;font-weight:700;color:var(--txt);text-decoration:none;cursor:pointer;background:linear-gradient(135deg,#4d1038,#2a0a20);border:1px solid var(--pink);border-radius:14px;padding:13px 22px;transition:.15s}
+.btn:hover{box-shadow:0 0 18px #ff2d9566;transform:translateY(-1px)}
+.btn.cyan{background:linear-gradient(135deg,#0a3040,#0a1a30);border-color:var(--cyan)}.btn.cyan:hover{box-shadow:0 0 18px #00e5ff66}
+.btn.gold{background:linear-gradient(135deg,#40330a,#2a200a);border-color:var(--gold)}.btn.gold:hover{box-shadow:0 0 18px #ffd70066}
+.btn.ghost{background:transparent;border-color:#4a3a7a;font-weight:500}
+.mine{outline:2px solid var(--cyan);box-shadow:0 0 22px #00e5ff33}
+.mine::before{content:'Твоё устройство';font-size:11px;color:var(--cyan);font-weight:700}
+footer{margin-top:28px;color:var(--dim);font-size:13px;line-height:1.7;text-align:center}
+code{background:#0006;border-radius:6px;padding:1px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header>
+  <img src="/icons/icon-192.png" alt="Иконка АРКАДИИ">
+  <div><h1><span class="p">АРКАДИЯ:</span> <span class="c">ЭОН РАДОСТИ</span></h1>
+  <p class="sub">Установи игру как приложение на телефон или компьютер: своя иконка, полноэкранный режим, работает без интернета.</p></div>
+ </header>
+
+ <div class="hero" data-hide-installed>
+  <div><b>📲 Установить в один клик</b><div class="state" data-install-state></div></div>
+  <button class="btn" onclick="installApp()">⬇ Установить приложение</button>
+ </div>
+
+ <p class="sub" style="margin:-8px 0 20px">🔌 <b>Играть, даже если сайт выключен:</b> установи приложение или скачай «Игру одним файлом» заранее. Одиночная игра, дуэли с ботом и сохранения работают без сервера; нужен он только для сетевой игры.</p>
+ <div class="grid">
+  <div class="card" id="c-android">
+   <h2>🤖 Android</h2><span class="tag">Chrome · Яндекс · Samsung Internet</span>
+   <ol><li>Нажми «Установить приложение» выше.</li><li>Или меню браузера <b>⋮</b> → «Установить приложение».</li><li>Иконка Аркадии появится на главном экране.</li></ol>
+   <button class="btn" onclick="installApp()">⬇ Установить на Android</button>
+  </div>
+  <div class="card" id="c-ios">
+   <h2>🍏 iPhone и iPad</h2><span class="tag">Safari</span>
+   <ol><li>Открой эту страницу в <b>Safari</b>.</li><li>Нажми «Поделиться» (квадрат со стрелкой ⬆).</li><li>Выбери «На экран Домой» → «Добавить».</li></ol>
+   <button class="btn" onclick="installApp()">📖 Показать инструкцию</button>
+  </div>
+  <div class="card" id="c-pc">
+   <h2>💻 Компьютер (браузер)</h2><span class="tag">Windows · macOS · Linux · Chromebook</span>
+   <ol><li>В Chrome, Edge или Яндекс Браузере нажми «Установить приложение».</li><li>Или значок <b>⊕</b> в адресной строке.</li><li>Аркадия откроется в своём окне, ярлык появится в меню «Пуск» / Dock.</li></ol>
+   <button class="btn" onclick="installApp()">⬇ Установить на компьютер</button>
+  </div>
+  <div class="card">
+   <h2>🖥 Настольная версия (.zip)</h2><span class="tag">Windows · macOS · Linux · Electron</span>
+   <p>Отдельная программа в своём окне, с сетевой игрой. Распакуй архив и запусти <code>start-windows.bat</code> (Windows) или <code>start-mac-linux.sh</code> (macOS/Linux). Нужен <a href="https://nodejs.org" target="_blank" rel="noopener" style="color:var(--cyan)">Node.js</a>. Готовый установщик <code>.exe</code> / <code>.dmg</code> / <code>.AppImage</code> собирается командой <code>npm run dist</code>.</p>
+   <button class="btn cyan" onclick="downloadDesktopApp()">⬇ Скачать для ПК (.zip)</button>
+  </div>
+  <div class="card">
+   <h2>📶 Свой сервер по Wi-Fi</h2><span class="tag">Твой компьютер = сервер · без интернета</span>
+   <p>Игра вместе по локальной сети. Компьютер раздаёт игру и сетевые комнаты, а друзья в той же Wi-Fi сети (или на точке доступа твоего телефона) открывают его адрес в браузере на телефоне или ПК. Распакуй архив и запусти <code>start-server-windows.bat</code> или <code>start-server-mac-linux.sh</code>. Нужен только <a href="https://nodejs.org" target="_blank" rel="noopener" style="color:var(--cyan)">Node.js</a>, интернет не нужен.</p>
+   <button class="btn gold" onclick="downloadLocalServer()">⬇ Скачать локальный сервер (.zip)</button>
+  </div>
+  <div class="card">
+   <h2>🎮 Игра одним файлом</h2><span class="tag">Любое устройство · без установки</span>
+   <p>Один HTML-файл. Он открывается в любом браузере без интернета. Сетевая игра в нём недоступна.</p>
+   <button class="btn gold" onclick="downloadOfflineGame(this)">⬇ Скачать HTML</button>
+  </div>
+  <div class="card">
+   <h2>💾 Сохранения</h2><span class="tag">Перенос прогресса</span>
+   <p>У сайта, приложения и файла сохранения раздельные. Чтобы перенести прогресс, скачай файл здесь и загрузи его на новом месте.</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" onclick="downloadSaves()">📦 Скачать</button><button class="btn ghost" onclick="importSaves()">📥 Загрузить</button></div>
+  </div>
+ </div>
+
+ <footer>
+  <a class="btn ghost" href="/">← Вернуться к игре</a>
+  <p style="margin-top:14px">Ссылка на эту страницу: <code id="dl-link"></code></p>
+ </footer>
+</div>
+<script>
+(function(){const P=window.ARC_PLATFORM||{};const id=P.ios?'c-ios':P.android?'c-android':'c-pc';const el=document.getElementById(id);if(el)el.classList.add('mine');
+document.getElementById('dl-link').textContent=(location.protocol.startsWith('http')?location.origin:'https://admirable-rugelach-6de6cf.netlify.app')+'/download.html';})();
+</script>
+</body>
+</html>

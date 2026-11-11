@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "АРКАДИЯ: Эон Радости",
+  "short_name": "Аркадия",
+  "description": "Пошаговая RPG с гачей, дуэлями душ и кооперативом на 2–30 игроков.",
+  "lang": "ru",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0a0018",
+  "theme_color": "#0a0018",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Скачать / установить", "url": "/download.html", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
